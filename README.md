@@ -1,18 +1,18 @@
 JournalWriteBot 🤖📊
 An advanced n8n workflow that acts as an AI-powered research assistant for journalists. It processes queries via WhatsApp (text, audio, or image), fetches economic data from the World Bank, performs web research, and delivers a synthesized summary with source citations and a confidence level.
 
-Features
-Multi-Modal Input: Accepts text, audio messages, and images via WhatsApp.
+*Features :
+ Multi-Modal Input: Accepts text, audio messages, and images via WhatsApp.
+ 
+ Automated Data Fetching: Retrieves official economic indicators from the World Bank API.
+ 
+ Web Research: Identifies reputable online sources for journalistic research.
+ 
+ AI-Powered Analysis: Uses Groq's LLMs to analyze, compare, and synthesize data into a clear Markdown report.
+ 
+ Voice & Image Processing: Integrates with ElevenLabs for speech-to-text and Groq's LLaVA for image understanding.
 
-Automated Data Fetching: Retrieves official economic indicators from the World Bank API.
-
-Web Research: Identifies reputable online sources for journalistic research.
-
-AI-Powered Analysis: Uses Groq's LLMs to analyze, compare, and synthesize data into a clear Markdown report.
-
-Voice & Image Processing: Integrates with ElevenLabs for speech-to-text and Groq's LLaVA for image understanding.
-
-Installation & Setup
+Installation & Setup : 
 Step 1: Configure the ngrok Tunnel
     1 . Download and install Docker Desktop from this link : https://docs.docker.com/desktop/setup/install/windows-install/
     2 . Create your Docker-Compose.yml
@@ -59,13 +59,18 @@ Step 2: Configure the n8n Container
 Step 3: Run n8n workflow
     1 . Open cmd
     2 . cd "the path in which include ngrok program"
-    3 . to get the endpoint online follow the steps from : https://dashboard.ngrok.com/get-started/setup/windows
-    4 . visit localhost:"your host port"
+    3 . To get the endpoint online follow the steps from : https://dashboard.ngrok.com/get-started/setup/windows
+    4 . Visit localhost:"your host port"
     5 . Download N8N Workflow.json
-    6 . import it into n8n localhost
+    6 . Import it into n8n localhost
+    7 . Run the workflow
 Step 4 : setup the web interface
     1 . Download index.html
+    2 . Replace YOUR_N8N_WEBHOOK_URL_HERE with the URL you copied from your Webhook node
+    3 . Run the file
 
+And finally your n8n workflow execute correctly
+nb : Please setup your APIs (groq , llama ...)
     <img width="1365" height="717" alt="Capture d'écran 2025-08-30 104550" src="https://github.com/user-attachments/assets/4e1c8b63-9f2e-48c5-935a-b31edebd63ab" />
 Navigate to your ngrok installation directory:
 <img width="1086" height="427" alt="Capture d'écran 2025-08-28 155827" src="https://github.com/user-attachments/assets/cba4a08a-bf5e-49ae-b252-67b6a20a3f0b" />
