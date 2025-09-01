@@ -2,7 +2,7 @@ JournalWriteBot 🤖📊
 An advanced n8n workflow that acts as an AI-powered research assistant for journalists. It processes queries via WhatsApp (text, audio, or image), fetches economic data from the World Bank, performs web research, and delivers a synthesized summary with source citations and a confidence level.
 
 *Features :
- Multi-Modal Input: Accepts text, audio messages, and images via WhatsApp.
+ Multi-Modal Input: Accepts text, audio messages, and images via a web interface.
  
  Automated Data Fetching: Retrieves official economic indicators from the World Bank API.
  
