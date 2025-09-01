@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered N8N Agent</title>
+    <!-- Load Tailwind CSS for modern, responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom font for a clean look */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #4F46E5;
+            --primary-light: #6366F1;
+            --primary-dark: #4338CA;
+            --secondary: #10B981;
+            --secondary-dark: #059669;
+            --accent: #F59E0B;
+            --light: #F9FAFB;
+            --dark: #1F2937;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 15px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .input-field {
+            transition: all 0.3s ease;
+            border: 2px solid #E5E7EB;
+        }
+        
+        .input-field:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(to right, var(--secondary), #34D399);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(to right, var(--secondary-dark), var(--secondary));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-record {
+            background: linear-gradient(to right, #EF4444, #F87171);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-record:hover, .btn-recording {
+            background: linear-gradient(to right, #DC2626, #EF4444);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+        
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .recording-animation {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background-color: #EF4444;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .tab {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .response-container {
+            transition: all 0.3s ease;
+            background: linear-gradient(to bottom right, #F9FAFB, #F3F4F6);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .typing-animation span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--dark);
+            margin: 0 2px;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        .typing-animation span:nth-child(1) { animation-delay: 0s; }
+        .typing-animation span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-animation span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 flex items-center justify-center min-h-screen">
+    <div class="card p-6 sm:p-10 w-full max-w-2xl">
+        <div class="text-center mb-8">
+            <div class="flex justify-center mb-4">
+                <div class="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center">
+                    <i class="fas fa-robot text-3xl text-indigo-600"></i>
+                </div>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">AI Agent Interface</h1>
+            <p class="text-gray-500">Send a text, voice, or image message to the n8n webhook and get a response.</p>
+        </div>
+
+        <!-- Tabs for different input methods -->
+        <div class="flex border-b border-gray-200 mb-6">
+            <div class="tab active py-2 px-4 mr-2" data-tab="text">
+                <i class="fas fa-keyboard mr-2"></i>Text
+            </div>
+            <div class="tab py-2 px-4 mx-2" data-tab="image">
+                <i class="fas fa-image mr-2"></i>Image
+            </div>
+            <div class="tab py-2 px-4 ml-2" data-tab="voice">
+                <i class="fas fa-microphone mr-2"></i>Voice
+            </div>
+        </div>
+
+        <!-- Form for sending data -->
+        <form id="messageForm" class="space-y-6">
+            <!-- Text Message Input (default visible) -->
+            <div id="text-tab" class="tab-content">
+                <label for="textMessage" class="block text-sm font-semibold mb-2 text-gray-700">
+                    <i class="fas fa-comment-dots mr-2 text-indigo-500"></i>Text Message:
+                </label>
+                <textarea id="textMessage" name="textMessage" rows="4" placeholder="Enter your query here, e.g., 'unemployment in Tunisia'"
+                    class="input-field w-full p-4 rounded-lg focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+            </div>
+
+            <!-- Image File Input (hidden by default) -->
+            <div id="image-tab" class="tab-content hidden">
+                <label for="imageFile" class="block text-sm font-semibold mb-2 text-gray-700">
+                    <i class="fas fa-camera mr-2 text-indigo-500"></i>Upload Image:
+                </label>
+                <div class="flex items-center justify-center w-full">
+                    <label for="imageFile" class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors duration-200">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                            <p class="text-xs text-gray-500">PNG, JPG, GIF (MAX. 5MB)</p>
+                        </div>
+                        <input id="imageFile" name="imageFile" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <div id="imagePreview" class="mt-4 hidden">
+                    <p class="text-sm font-medium text-gray-700 mb-2">Image Preview:</p>
+                    <img id="preview" class="max-h-48 rounded-lg shadow-md mx-auto" />
+                </div>
+            </div>
+
+            <!-- Voice Message Input (hidden by default) -->
+            <div id="voice-tab" class="tab-content hidden">
+                <label class="block text-sm font-semibold mb-2 text-gray-700">
+                    <i class="fas fa-microphone-alt mr-2 text-indigo-500"></i>Record Voice Message:
+                </label>
+                <div class="voice-controls flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 sm:space-x-4">
+                    <button type="button" id="recordButton"
+                        class="btn-record w-full sm:w-auto py-3 px-6 rounded-lg font-semibold text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                        <i class="fas fa-microphone mr-2"></i>Start Recording
+                    </button>
+                    <button type="button" id="stopButton" disabled
+                        class="w-full sm:w-auto py-3 px-6 rounded-lg font-semibold text-gray-700 bg-gray-200 cursor-not-allowed">
+                        <i class="fas fa-stop mr-2"></i>Stop Recording
+                    </button>
+                </div>
+                <div class="mt-4">
+                    <audio id="audioPlayback" controls class="w-full hidden"></audio>
+                </div>
+                <div id="recordingStatus" class="mt-4 text-sm text-gray-600 hidden">
+                    <div class="flex items-center">
+                        <div class="recording-animation"></div>
+                        <span>Recording in progress...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submission Button -->
+            <button type="submit" id="submitButton"
+                class="btn-primary w-full py-3 px-6 rounded-lg font-bold text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 pulse">
+                <i class="fas fa-paper-plane mr-2"></i>Send to Webhook
+            </button>
+        </form>
+
+        <!-- Status and Response Display -->
+        <div id="status" class="mt-8 p-4 rounded-lg bg-blue-50 border border-blue-200 text-center text-sm font-medium text-blue-700 hidden"></div>
+        
+        <div id="responseContainer" class="mt-8 response-container rounded-lg shadow-inner hidden fade-in">
+            <div class="flex items-center justify-between p-4 border-b border-gray-200">
+                <h2 class="text-lg font-bold text-gray-800 flex items-center">
+                    <i class="fas fa-reply mr-2 text-indigo-500"></i>Webhook Response:
+                </h2>
+                <button id="copyResponse" class="text-gray-500 hover:text-indigo-600 transition-colors duration-200">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+            <div class="p-4">
+                <div id="loading" class="typing-animation py-4 hidden">
+                    <p class="text-gray-500 flex items-center">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span class="ml-2">AI is thinking...</span>
+                    </p>
+                </div>
+                <pre id="responseContent" class="whitespace-pre-wrap font-mono text-sm text-gray-800"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set the hardcoded webhook URL
+        const WEBHOOK_URL = 'https://monitor-decent-midge.ngrok-free.app/webhook-test/d3407d7b-921c-41d6-8e7d-3ad8c39a4952';
+
+        // Get references to all necessary DOM elements
+        const messageForm = document.getElementById('messageForm');
+        const textMessageInput = document.getElementById('textMessage');
+        const imageFileInput = document.getElementById('imageFile');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImage = document.getElementById('preview');
+        const recordButton = document.getElementById('recordButton');
+        const stopButton = document.getElementById('stopButton');
+        const audioPlayback = document.getElementById('audioPlayback');
+        const recordingStatus = document.getElementById('recordingStatus');
+        const submitButton = document.getElementById('submitButton');
+        const statusDiv = document.getElementById('status');
+        const responseContainer = document.getElementById('responseContainer');
+        const responseContent = document.getElementById('responseContent');
+        const loadingIndicator = document.getElementById('loading');
+        const copyButton = document.getElementById('copyResponse');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // Voice recording variables
+        let mediaRecorder;
+        let audioChunks = [];
+        let audioBlob;
+
+        // Tab switching functionality
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Show relevant content
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                document.getElementById(`${tabId}-tab`).classList.remove('hidden');
+            });
+        });
+
+        // Image preview functionality
+        imageFileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    imagePreview.classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.classList.add('hidden');
+            }
+        });
+
+        // Function to update the UI and prevent multiple submissions
+        const setUIState = (state) => {
+            if (state === 'sending') {
+                statusDiv.classList.add('hidden');
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>Sending...';
+                responseContainer.classList.add('hidden');
+                loadingIndicator.classList.remove('hidden');
+                responseContent.textContent = '';
+            } else if (state === 'ready') {
+                submitButton.disabled = false;
+                submitButton.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Send to Webhook';
+                loadingIndicator.classList.add('hidden');
+            } else if (state === 'recording') {
+                recordButton.disabled = true;
+                recordButton.classList.add('btn-recording');
+                recordButton.innerHTML = '<i class="fas fa-microphone mr-2"></i>Recording...';
+                stopButton.disabled = false;
+                stopButton.classList.remove('bg-gray-200', 'cursor-not-allowed');
+                stopButton.classList.add('bg-gray-300', 'hover:bg-gray-400');
+                audioPlayback.classList.add('hidden');
+                audioPlayback.src = '';
+                audioChunks = [];
+                recordingStatus.classList.remove('hidden');
+            } else if (state === 'stopped') {
+                recordButton.disabled = false;
+                recordButton.classList.remove('btn-recording');
+                recordButton.innerHTML = '<i class="fas fa-microphone mr-2"></i>Start Recording';
+                stopButton.disabled = true;
+                stopButton.classList.add('bg-gray-200', 'cursor-not-allowed');
+                stopButton.classList.remove('bg-gray-300', 'hover:bg-gray-400');
+                audioPlayback.classList.remove('hidden');
+                recordingStatus.classList.add('hidden');
+            }
+        };
+
+        // Copy response functionality
+        copyButton.addEventListener('click', () => {
+            const textToCopy = responseContent.textContent;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                // Show feedback that text was copied
+                const originalHTML = copyButton.innerHTML;
+                copyButton.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    copyButton.innerHTML = originalHTML;
+                }, 2000);
+            });
+        });
+
+        // Event listener for form submission
+        messageForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            setUIState('sending');
+            const payload = {};
+            const messageTypes = [];
+
+            // Helper function to read a file as a Base64 string
+            const readAsBase64 = (file) => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = error => reject(error);
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            // Check for each message type and add to payload
+            const textMessage = textMessageInput.value.trim();
+            if (textMessage) {
+                payload.textMessage = textMessage;
+                messageTypes.push('text');
+            }
+
+            const imageFile = imageFileInput.files[0];
+            if (imageFile) {
+                try {
+                    payload.imageFile = await readAsBase64(imageFile);
+                    messageTypes.push('image');
+                } catch (error) {
+                    statusDiv.textContent = `Error reading image file: ${error.message}`;
+                    statusDiv.classList.remove('hidden');
+                    statusDiv.classList.remove('bg-blue-50', 'border-blue-200', 'text-blue-700');
+                    statusDiv.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
+                    setUIState('ready');
+                    return;
+                }
+            }
+            
+            if (audioBlob) {
+                try {
+                    payload.voiceFile = await readAsBase64(audioBlob);
+                    messageTypes.push('audio');
+                } catch (error) {
+                    statusDiv.textContent = `Error processing recorded audio: ${error.message}`;
+                    statusDiv.classList.remove('hidden');
+                    statusDiv.classList.remove('bg-blue-50', 'border-blue-200', 'text-blue-700');
+                    statusDiv.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
+                    setUIState('ready');
+                    return;
+                }
+            }
+
+            // Add the message type(s) to the payload if any
+            if (messageTypes.length > 0) {
+                payload.messageTypes = messageTypes;
+            } else {
+                statusDiv.textContent = 'Please provide at least one input (text, image, or voice).';
+                statusDiv.classList.remove('hidden');
+                statusDiv.classList.remove('bg-blue-50', 'border-blue-200', 'text-blue-700');
+                statusDiv.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
+                setUIState('ready');
+                return;
+            }
+
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                if (response.ok) {
+                    const resultText = await response.text();
+                    statusDiv.textContent = 'Success: Response received from n8n!';
+                    statusDiv.classList.remove('hidden');
+                    statusDiv.classList.remove('bg-red-50', 'border-red-200', 'text-red-700');
+                    statusDiv.classList.add('bg-green-50', 'border-green-200', 'text-green-700');
+                    responseContainer.classList.remove('hidden');
+                    responseContent.textContent = resultText;
+                } else {
+                    const errorText = await response.text();
+                    statusDiv.textContent = `Error: The n8n webhook returned an error. Status: ${response.status}. Message: ${errorText}`;
+                    statusDiv.classList.remove('hidden');
+                    statusDiv.classList.remove('bg-blue-50', 'border-blue-200', 'text-blue-700');
+                    statusDiv.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
+                    responseContainer.classList.add('hidden');
+                }
+            } catch (error) {
+                statusDiv.textContent = `Network Error: ${error.message}. Please check the webhook URL.`;
+                statusDiv.classList.remove('hidden');
+                statusDiv.classList.remove('bg-blue-50', 'border-blue-200', 'text-blue-700');
+                statusDiv.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
+                responseContainer.classList.add('hidden');
+            } finally {
+                setUIState('ready');
+            }
+        });
+
+        // Event listeners for voice recording buttons
+        recordButton.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = (e) => {
+                    audioChunks.push(e.data);
+                };
+                mediaRecorder.onstop = () => {
+                    audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    audioPlayback.src = audioUrl;
+                    setUIState('stopped');
+                    
+                    // Stop all tracks in the stream
+                    stream.getTracks().forEach(track => track.stop());
+                };
+                mediaRecorder.start();
+                setUIState('recording');
+            } catch (err) {
+                statusDiv.textContent = `Error accessing microphone: ${err.message}`;
+                statusDiv.classList.remove('hidden');
+                statusDiv.classList.remove('bg-blue-50', 'border-blue-200', 'text-blue-700');
+                statusDiv.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
+            }
+        });
+
+        stopButton.addEventListener('click', () => {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+        });
+
+    </script>
+</body>
+</html>
