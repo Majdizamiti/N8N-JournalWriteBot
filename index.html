@@ -13,19 +13,20 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
         :root {
-            --primary: #4F46E5;
-            --primary-light: #6366F1;
-            --primary-dark: #4338CA;
-            --secondary: #10B981;
-            --secondary-dark: #059669;
-            --accent: #F59E0B;
+            --primary: #007a3d; /* Palestinian green */
+            --primary-light: #009946;
+            --primary-dark: #005c2e;
+            --secondary: #ce1126; /* Palestinian red */
+            --secondary-dark: #a50e20;
+            --accent: #000000; /* Black */
+            --accent-light: #ffffff; /* White */
             --light: #F9FAFB;
             --dark: #1F2937;
         }
         
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
             color: var(--dark);
             min-height: 100vh;
         }
@@ -35,6 +36,7 @@
             border-radius: 1.5rem;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid var(--primary);
         }
         
         .card:hover {
@@ -49,7 +51,7 @@
         
         .input-field:focus {
             border-color: var(--primary-light);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            box-shadow: 0 0 0 3px rgba(0, 154, 70, 0.2);
         }
         
         .btn-primary {
@@ -60,18 +62,18 @@
         .btn-primary:hover {
             background: linear-gradient(to right, var(--primary-dark), var(--primary));
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 122, 61, 0.3);
         }
         
         .btn-secondary {
-            background: linear-gradient(to right, var(--secondary), #34D399);
+            background: linear-gradient(to right, var(--secondary), #e63946);
             transition: all 0.3s ease;
         }
         
         .btn-secondary:hover {
             background: linear-gradient(to right, var(--secondary-dark), var(--secondary));
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 4px 12px rgba(206, 17, 38, 0.3);
         }
         
         .btn-record {
@@ -149,127 +151,183 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        .palestine-flag {
+            height: 30px;
+            width: 45px;
+            position: relative;
+            display: inline-block;
+            margin: 0 5px;
+            vertical-align: middle;
+            background: linear-gradient(to bottom, 
+                black 0%, black 33.33%, 
+                white 33.33%, white 66.66%, 
+                #007a3d 66.66%, #007a3d 100%);
+        }
+        
+        .palestine-flag::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 15%;
+            height: 100%;
+            background-color: #ce1126;
+            clip-path: polygon(0 0, 100% 50%, 0 100%);
+        }
+        
+        .solidarity-banner {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 8px 0;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        
+        .keffiyeh-pattern {
+            background-image: 
+                linear-gradient(45deg, #000000 25%, transparent 25%), 
+                linear-gradient(-45deg, #000000 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #000000 75%), 
+                linear-gradient(-45deg, transparent 75%, #000000 75%);
+            background-size: 4px 4px;
+            background-position: 0 0, 0 2px, 2px -2px, -2px 0px;
+            height: 20px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body class="p-4 sm:p-8 flex items-center justify-center min-h-screen">
-    <div class="card p-6 sm:p-10 w-full max-w-2xl">
-        <div class="text-center mb-8">
-            <div class="flex justify-center mb-4">
-                <div class="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center">
-                    <i class="fas fa-robot text-3xl text-indigo-600"></i>
-                </div>
-            </div>
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">AI Agent Interface</h1>
-            <p class="text-gray-500">Send a text, voice, or image message to the n8n webhook and get a response.</p>
+    <div class="w-full max-w-4xl">
+        <!-- Solidarity Banner -->
+        <div class="solidarity-banner mb-6 flex items-center justify-center space-x-2">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgMjAwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjY2LjciIGZpbGw9IiMwMDdhM2QiLz48cmVjdCB5PSI2Ni43IiB3aWR0aD0iMzAwIiBoZWlnaHQ9IjY2LjciIGZpbGw9IiNmZmYiLz48cmVjdCB5PSIxMzMuMyIgd2lkdGg9IjMwMCIgaGVpZ2h0PSI2Ni43IiBmaWxsPSIjMDAwIi8+PHBhdGggZD0iTTAgMGgxMDB2MjAwSDB6IiBmaWxsPSIjY2UxMTI2Ii8+PC9zdmc+" alt="Palestine Flag" class="h-6 w-9 mx-1">
+            <span>We Stand With Palestine - Free Palestine</span>
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgMjAwIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjY2LjciIGZpbGw9IiMwMDdhM2QiLz48cmVjdCB5PSI2Ni43IiB3aWR0aD0iMzAwIiBoZWlnaHQ9IjY2LjciIGZpbGw9IiNmZmYiLz48cmVjdCB5PSIxMzMuMyIgd2lkdGg9IjMwMCIgaGVpZ2h0PSI2Ni43IiBmaWxsPSIjMDAwIi8+PHBhdGggZD0iTTAgMGgxMDB2MjAwSDB6IiBmaWxsPSIjY2UxMTI2Ii8+PC9zdmc+" alt="Palestine Flag" class="h-6 w-9 mx-1">
         </div>
-
-        <!-- Tabs for different input methods -->
-        <div class="flex border-b border-gray-200 mb-6">
-            <div class="tab active py-2 px-4 mr-2" data-tab="text">
-                <i class="fas fa-keyboard mr-2"></i>Text
-            </div>
-            <div class="tab py-2 px-4 mx-2" data-tab="image">
-                <i class="fas fa-image mr-2"></i>Image
-            </div>
-            <div class="tab py-2 px-4 ml-2" data-tab="voice">
-                <i class="fas fa-microphone mr-2"></i>Voice
-            </div>
-        </div>
-
-        <!-- Form for sending data -->
-        <form id="messageForm" class="space-y-6">
-            <!-- Text Message Input (default visible) -->
-            <div id="text-tab" class="tab-content">
-                <label for="textMessage" class="block text-sm font-semibold mb-2 text-gray-700">
-                    <i class="fas fa-comment-dots mr-2 text-indigo-500"></i>Text Message:
-                </label>
-                <textarea id="textMessage" name="textMessage" rows="4" placeholder="Enter your query here, e.g., 'unemployment in Tunisia'"
-                    class="input-field w-full p-4 rounded-lg focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
-            </div>
-
-            <!-- Image File Input (hidden by default) -->
-            <div id="image-tab" class="tab-content hidden">
-                <label for="imageFile" class="block text-sm font-semibold mb-2 text-gray-700">
-                    <i class="fas fa-camera mr-2 text-indigo-500"></i>Upload Image:
-                </label>
-                <div class="flex items-center justify-center w-full">
-                    <label for="imageFile" class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors duration-200">
-                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
-                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                            <p class="text-xs text-gray-500">PNG, JPG, GIF (MAX. 5MB)</p>
-                        </div>
-                        <input id="imageFile" name="imageFile" type="file" class="hidden" accept="image/*" />
-                    </label>
-                </div>
-                <div id="imagePreview" class="mt-4 hidden">
-                    <p class="text-sm font-medium text-gray-700 mb-2">Image Preview:</p>
-                    <img id="preview" class="max-h-48 rounded-lg shadow-md mx-auto" />
-                </div>
-            </div>
-
-            <!-- Voice Message Input (hidden by default) -->
-            <div id="voice-tab" class="tab-content hidden">
-                <label class="block text-sm font-semibold mb-2 text-gray-700">
-                    <i class="fas fa-microphone-alt mr-2 text-indigo-500"></i>Record Voice Message:
-                </label>
-                <div class="voice-controls flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 sm:space-x-4">
-                    <button type="button" id="recordButton"
-                        class="btn-record w-full sm:w-auto py-3 px-6 rounded-lg font-semibold text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
-                        <i class="fas fa-microphone mr-2"></i>Start Recording
-                    </button>
-                    <button type="button" id="stopButton" disabled
-                        class="w-full sm:w-auto py-3 px-6 rounded-lg font-semibold text-gray-700 bg-gray-200 cursor-not-allowed">
-                        <i class="fas fa-stop mr-2"></i>Stop Recording
-                    </button>
-                </div>
-                <div class="mt-4">
-                    <audio id="audioPlayback" controls class="w-full hidden"></audio>
-                </div>
-                <div id="recordingStatus" class="mt-4 text-sm text-gray-600 hidden">
-                    <div class="flex items-center">
-                        <div class="recording-animation"></div>
-                        <span>Recording in progress...</span>
+        
+        <div class="card p-6 sm:p-10 w-full">
+            <div class="text-center mb-8">
+                <div class="flex justify-center mb-4">
+                    <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center relative">
+                        <i class="fas fa-robot text-3xl text-green-600"></i>
+                        <div class="keffiyeh-pattern absolute -bottom-1 w-12"></div>
                     </div>
                 </div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">AI Agent</h1>
+                <p class="text-gray-500">Send a text, voice, or image message.</p>
             </div>
 
-            <!-- Submission Button -->
-            <button type="submit" id="submitButton"
-                class="btn-primary w-full py-3 px-6 rounded-lg font-bold text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 pulse">
-                <i class="fas fa-paper-plane mr-2"></i>Send to Webhook
-            </button>
-        </form>
-
-        <!-- Status and Response Display -->
-        <div id="status" class="mt-8 p-4 rounded-lg bg-blue-50 border border-blue-200 text-center text-sm font-medium text-blue-700 hidden"></div>
-        
-        <div id="responseContainer" class="mt-8 response-container rounded-lg shadow-inner hidden fade-in">
-            <div class="flex items-center justify-between p-4 border-b border-gray-200">
-                <h2 class="text-lg font-bold text-gray-800 flex items-center">
-                    <i class="fas fa-reply mr-2 text-indigo-500"></i>Webhook Response:
-                </h2>
-                <button id="copyResponse" class="text-gray-500 hover:text-indigo-600 transition-colors duration-200">
-                    <i class="fas fa-copy"></i>
-                </button>
-            </div>
-            <div class="p-4">
-                <div id="loading" class="typing-animation py-4 hidden">
-                    <p class="text-gray-500 flex items-center">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span class="ml-2">AI is thinking...</span>
-                    </p>
+            <!-- Tabs for different input methods -->
+            <div class="flex border-b border-gray-200 mb-6">
+                <div class="tab active py-2 px-4 mr-2" data-tab="text">
+                    <i class="fas fa-keyboard mr-2"></i>Text
                 </div>
-                <pre id="responseContent" class="whitespace-pre-wrap font-mono text-sm text-gray-800"></pre>
+                <div class="tab py-2 px-4 mx-2" data-tab="image">
+                    <i class="fas fa-image mr-2"></i>Image
+                </div>
+                <div class="tab py-2 px-4 ml-2" data-tab="voice">
+                    <i class="fas fa-microphone mr-2"></i>Voice
+                </div>
+            </div>
+
+            <!-- Form for sending data -->
+            <form id="messageForm" class="space-y-6">
+                <!-- Text Message Input (default visible) -->
+                <div id="text-tab" class="tab-content">
+                    <label for="textMessage" class="block text-sm font-semibold mb-2 text-gray-700">
+                        <i class="fas fa-comment-dots mr-2 text-green-500"></i>Text Message:
+                    </label>
+                    <textarea id="textMessage" name="textMessage" rows="4" placeholder="Ask for intersted subject with mention the topic and countries like 'Unemployment in tunisia'"
+                        class="input-field w-full p-4 rounded-lg focus:ring-2 focus:ring-green-500 resize-none"></textarea>
+                </div>
+
+                <!-- Image File Input (hidden by default) -->
+                <div id="image-tab" class="tab-content hidden">
+                    <label for="imageFile" class="block text-sm font-semibold mb-2 text-gray-700">
+                        <i class="fas fa-camera mr-2 text-green-500"></i>Upload Image:
+                    </label>
+                    <div class="flex items-center justify-center w-full">
+                        <label for="imageFile" class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors duration-200">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                                <p class="text-xs text-gray-500">PNG, JPG, GIF (MAX. 5MB)</p>
+                            </div>
+                            <input id="imageFile" name="imageFile" type="file" class="hidden" accept="image/*" />
+                        </label>
+                    </div>
+                    <div id="imagePreview" class="mt-4 hidden">
+                        <p class="text-sm font-medium text-gray-700 mb-2">Image Preview:</p>
+                        <img id="preview" class="max-h-48 rounded-lg shadow-md mx-auto" />
+                    </div>
+                </div>
+
+                <!-- Voice Message Input (hidden by default) -->
+                <div id="voice-tab" class="tab-content hidden">
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">
+                        <i class="fas fa-microphone-alt mr-2 text-green-500"></i>Record Voice Message:
+                    </label>
+                    <div class="voice-controls flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 sm:space-x-4">
+                        <button type="button" id="recordButton"
+                            class="btn-record w-full sm:w-auto py-3 px-6 rounded-lg font-semibold text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                            <i class="fas fa-microphone mr-2"></i>Start Recording
+                        </button>
+                        <button type="button" id="stopButton" disabled
+                            class="w-full sm:w-auto py-3 px-6 rounded-lg font-semibold text-gray-700 bg-gray-200 cursor-not-allowed">
+                            <i class="fas fa-stop mr-2"></i>Stop Recording
+                        </button>
+                    </div>
+                    <div class="mt-4">
+                        <audio id="audioPlayback" controls class="w-full hidden"></audio>
+                    </div>
+                    <div id="recordingStatus" class="mt-4 text-sm text-gray-600 hidden">
+                        <div class="flex items-center">
+                            <div class="recording-animation"></div>
+                            <span>Recording in progress...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submission Button -->
+                <button type="submit" id="submitButton"
+                    class="btn-primary w-full py-3 px-6 rounded-lg font-bold text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 pulse">
+                    <i class="fas fa-paper-plane mr-2"></i>Send to Webhook
+                </button>
+            </form>
+
+            <!-- Status and Response Display -->
+            <div id="status" class="mt-8 p-4 rounded-lg bg-blue-50 border border-blue-200 text-center text-sm font-medium text-blue-700 hidden"></div>
+            
+            <div id="responseContainer" class="mt-8 response-container rounded-lg shadow-inner hidden fade-in">
+                <div class="flex items-center justify-between p-4 border-b border-gray-200">
+                    <h2 class="text-lg font-bold text-gray-800 flex items-center">
+                        <i class="fas fa-reply mr-2 text-green-500"></i>Webhook Response:
+                    </h2>
+                    <button id="copyResponse" class="text-gray-500 hover:text-green-600 transition-colors duration-200">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <div id="loading" class="typing-animation py-4 hidden">
+                        <p class="text-gray-500 flex items-center">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span class="ml-2">AI is thinking...</span>
+                        </p>
+                    </div>
+                    <pre id="responseContent" class="whitespace-pre-wrap font-mono text-sm text-gray-800"></pre>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         // Set the hardcoded webhook URL
-        const WEBHOOK_URL = 'YOUR_N8N_WEBHOOK_URL_HERE';
+        const WEBHOOK_URL = 'https://monitor-decent-midge.ngrok-free.app/webhook-test/d3407d7b-921c-41d6-8e7d-3ad8c39a4952';
 
         // Get references to all necessary DOM elements
         const messageForm = document.getElementById('messageForm');
