@@ -65,7 +65,7 @@ Step 3: Run n8n workflow
     5 . Download N8N Workflow.json
     6 . Import it into n8n localhost
     7 . Run the workflow
-    <img width="1086" height="427" alt="Capture d'écran 2025-08-28 155827" src="https://github.com/user-attachments/assets/cba4a08a-bf5e-49ae-b252-67b6a20a3f0b" />
+    <img width="1365" height="644" alt="WORKFLOW" src="https://github.com/user-attachments/assets/ff165882-feb0-4264-bb7e-ed2a9d9dc541" />
 Step 4 : setup the web interface
     1 . Download index.html
     2 . Replace YOUR_N8N_WEBHOOK_URL_HERE with the URL you copied from your Webhook node
