@@ -165,7 +165,7 @@
     },
     {
       "parameters": {
-        "toolDescription": "Fetches economic data from World Bank API",
+        "toolDescription": "Fetches data from World Bank API",
         "url": "={{ $fromAI('URL', ``, 'string') }}",
         "sendQuery": true,
         "queryParameters": {
@@ -341,7 +341,7 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        -1328,
+        -1456,
         256
       ],
       "id": "9d495b69-f787-40e8-aa3c-f72db9431d05",
@@ -364,8 +364,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -848,
-        -80
+        -912,
+        -16
       ],
       "id": "fc5900ea-d49a-4dfb-acc4-b95ba76a7171",
       "name": "Edit Fields1"
@@ -396,7 +396,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -1504,
+        -1632,
         272
       ],
       "id": "6bff3d7e-9f70-4252-8201-6f6f5dc7a33f",
@@ -425,8 +425,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1072,
-        272
+        -1056,
+        288
       ],
       "id": "0af9f11c-2f87-42b1-bac2-4e7cf097fe61",
       "name": "Code1"
@@ -479,24 +479,65 @@
     },
     {
       "parameters": {
+        "content": "## Image path\n",
+        "height": 304,
+        "width": 1040
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1136,
+        544
+      ],
+      "typeVersion": 1,
+      "id": "a79f49bf-bc74-4a56-acce-93e2914cdbca",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the raw text output from the previous node.\nconst rawOutput = $json.output;\n\n// Add a defensive check to make sure the output is a string before processing.\nif (typeof rawOutput !== 'string') {\n  return [{\n    json: {\n      error: \"The output from the previous node was not a text string.\"\n    }\n  }];\n}\n\n// Use regular expressions to extract the values for country and indicator.\nconst countryMatch = rawOutput.match(/country\\s+(\\S+)/i);\nconst indicatorMatch = rawOutput.match(/indicator\\s+(\\S+)/i);\n\nconst countryCode = countryMatch ? countryMatch[1] : null;\nconst indicatorCode = indicatorMatch ? indicatorMatch[1] : null;\n\n// Return a single JSON object with the extracted values.\n// This is the output that your HTTP Request node will reference.\nreturn [{\n  json: {\n    country: countryCode,\n    indicator: indicatorCode,\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        16
+      ],
+      "id": "4ed9d32a-a90b-49a8-b6d6-f405c0977eac",
+      "name": "Data Divide"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Enhanced data preprocessing for research workflow\nconst body = items[0].json.body || items[0].json;\n\n// Extract and validate research parameters\nconst researchPrompt = body.researchPrompt || '';\nconst researchDepth = body.researchDepth || 'comprehensive'; // quick, detailed, comprehensive\nconst researchFocus = body.researchFocus || 'auto'; // historical, technical, cultural, functional\n\n// Validate image data\nconst imageFile = body.imageFile || body.data || body.file;\nif (!imageFile) {\n    throw new Error('No image file provided. Please include imageFile in your payload.');\n}\n\n// Prepare enhanced research context\nconst researchContext = {\n    researchPrompt: researchPrompt,\n    researchDepth: researchDepth,\n    researchFocus: researchFocus,\n    timestamp: new Date().toISOString(),\n    originalData: {\n        messageTypes: body.messageTypes || [],\n        hasImage: !!imageFile\n    }\n};\n\nreturn [{\n    json: {\n        ...body,\n        ...researchContext,\n        imageFile: imageFile\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1120,
+        608
+      ],
+      "id": "24d00901-c81b-4364-91e9-3a352d1441a4",
+      "name": "Preprocess Data"
+    },
+    {
+      "parameters": {
         "assignments": {
           "assignments": [
             {
               "id": "52a2f0d9-3137-4f6e-a2c1-8285694f6159",
               "name": "output",
               "type": "string",
-              "value": "={{ $json.choices[0].message.content }}"
+              "value": "={{ $json.research_output }}"
             }
           ]
         },
         "options": {}
       },
-      "id": "37f06217-8c38-412b-b925-e83792ad2ea9",
-      "name": "Get only the text",
+      "id": "860ddd69-9cd6-40be-b896-03e9c69c8e86",
+      "name": "Format Research Output",
       "type": "n8n-nodes-base.set",
       "position": [
-        -400,
-        640
+        -240,
+        608
       ],
       "typeVersion": 3.4
     },
@@ -519,15 +560,15 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"Describe this image in great detail\"\n        },\n        {\n          \"type\": \"image_url\",\n          \"image_url\": {\n            \"url\": \"data:image/jpeg;base64,{{ $json.data }}\"\n          }\n        }\n      ]\n    }\n  ],\n  \"model\": \"meta-llama/llama-4-scout-17b-16e-instruct\"\n}",
+        "jsonBody": "={\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a expert research analyst specializing in image-based research. Provide comprehensive, factual analysis with historical context, technical details, cultural significance, and practical implications. Structure your response with clear sections and provide depth based on the research parameters.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"RESEARCH PARAMETERS:\\n- Depth: {{ $json.researchDepth }}\\n- Focus: {{ $json.researchFocus }}\\n- Prompt: {{ $json.researchPrompt || 'Conduct comprehensive research analysis of this image covering historical context, technical aspects, cultural significance, and practical implications. Provide detailed, factual information with insights that would be valuable for academic or professional research purposes.' }}\\n\\nPlease analyze this image and provide a research-grade response:\"\n        },\n        {\n          \"type\": \"image_url\",\n          \"image_url\": {\n            \"url\": \"data:image/jpeg;base64,{{ $json.data }}\",\n            \"detail\": \"high\"\n          }\n        }\n      ]\n    }\n  ],\n  \"model\": \"meta-llama/llama-4-scout-17b-16e-instruct\",\n  \"max_tokens\": 4000,\n  \"temperature\": 0.1\n}",
         "options": {}
       },
-      "id": "66483362-aba7-4dff-885b-2d5f8d919acd",
-      "name": "HTTP Request GROQ LLAVA",
+      "id": "09dc32ba-11b2-43e4-9bc5-fed0c02bd1ed",
+      "name": "Advanced Research Analysis",
       "type": "n8n-nodes-base.httpRequest",
       "position": [
-        -624,
-        640
+        -560,
+        608
       ],
       "typeVersion": 4.2
     },
@@ -536,56 +577,41 @@
         "operation": "binaryToPropery",
         "options": {}
       },
-      "id": "62b680d9-ac09-4dd8-a337-6f242af41621",
-      "name": "convert the image file to base64",
+      "id": "0bd9ddc9-9bac-4dff-88a2-cfbb1d2680b0",
+      "name": "Convert Image to Base64",
       "type": "n8n-nodes-base.extractFromFile",
       "position": [
-        -848,
-        640
+        -736,
+        608
       ],
       "typeVersion": 1,
       "alwaysOutputData": true
     },
     {
       "parameters": {
-        "jsCode": "// Get the raw Base64 string from the webhook body.\nconst imageFile = items[0].json.body.imageFile;\n\n// Split the string at the comma to remove the 'data:image/jpeg;base64,' prefix.\nconst [prefix, base64Data] = imageFile.split(',');\n\n// Extract the file extension (e.g., 'jpeg', 'png') from the MIME type.\nconst fileExtension = prefix.match(/\\/([a-zA-Z0-9]+);/)[1];\n\n// Create a unique file name using a timestamp and the extracted extension.\nconst fileName = `image_${Date.now()}.${fileExtension}`;\n\n// Convert the Base64 string to a binary buffer.\nconst buffer = Buffer.from(base64Data, 'base64');\n\n// Return the binary data as a new item, including the new file name.\nreturn [{\n  json: {},\n  binary: {\n    data: {\n      data: buffer,\n      mimeType: `image/${fileExtension}`,\n      fileExtension: fileExtension,\n      fileName: fileName\n    }\n  }\n}];"
+        "jsCode": "// Robust image processing for research workflow\nconst body = items[0].json;\nconst imageFile = body.imageFile;\n\nif (!imageFile) {\n    throw new Error('Image data missing. Please provide imageFile in base64 format.');\n}\n\n// Handle both data URI and raw base64\nlet base64Data, mimeType, fileExtension;\n\nif (imageFile.includes('data:image/')) {\n    const [prefix, data] = imageFile.split(',');\n    base64Data = data;\n    \n    const mimeMatch = prefix.match(/image\\/([a-zA-Z0-9]+);?/);\n    fileExtension = mimeMatch ? mimeMatch[1] : 'jpeg';\n    mimeType = `image/${fileExtension}`;\n} else {\n    base64Data = imageFile;\n    fileExtension = 'jpeg';\n    mimeType = 'image/jpeg';\n}\n\n// Create research identifier\nconst researchId = `research_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;\n\n// Convert to buffer\nconst buffer = Buffer.from(base64Data, 'base64');\n\n// Return with research metadata\nreturn [{\n    json: {\n        researchPrompt: body.researchPrompt || '',\n        researchDepth: body.researchDepth || 'comprehensive',\n        researchFocus: body.researchFocus || 'auto',\n        researchId: researchId,\n        originalFileName: `${researchId}.${fileExtension}`,\n        processedAt: new Date().toISOString()\n    },\n    binary: {\n        data: {\n            data: buffer,\n            mimeType: mimeType,\n            fileExtension: fileExtension,\n            fileName: `${researchId}.${fileExtension}`\n        }\n    }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1072,
-        640
+        -960,
+        608
       ],
-      "id": "ab520ebb-dcc8-421e-b112-9964a0ebf521",
-      "name": "Code2"
+      "id": "c4ffc648-0dbe-4e47-9d37-787947032071",
+      "name": "Research Image Processor"
     },
     {
       "parameters": {
-        "content": "## Image path\n",
-        "height": 256,
-        "width": 864
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -1136,
-        576
-      ],
-      "typeVersion": 1,
-      "id": "a79f49bf-bc74-4a56-acce-93e2914cdbca",
-      "name": "Sticky Note4"
-    },
-    {
-      "parameters": {
-        "jsCode": "// Get the raw text output from the previous node.\nconst rawOutput = $json.output;\n\n// Add a defensive check to make sure the output is a string before processing.\nif (typeof rawOutput !== 'string') {\n  return [{\n    json: {\n      error: \"The output from the previous node was not a text string.\"\n    }\n  }];\n}\n\n// Use regular expressions to extract the values for country and indicator.\nconst countryMatch = rawOutput.match(/country\\s+(\\S+)/i);\nconst indicatorMatch = rawOutput.match(/indicator\\s+(\\S+)/i);\n\nconst countryCode = countryMatch ? countryMatch[1] : null;\nconst indicatorCode = indicatorMatch ? indicatorMatch[1] : null;\n\n// Return a single JSON object with the extracted values.\n// This is the output that your HTTP Request node will reference.\nreturn [{\n  json: {\n    country: countryCode,\n    indicator: indicatorCode,\n  }\n}];"
+        "jsCode": "// Process API response and create research metadata\nconst response = items[0].json;\n\nreturn [{\n    json: {\n        research_output: response.choices[0].message.content,\n        research_metadata: {\n            model: response.model,\n            completion_tokens: response.usage?.completion_tokens || 0,\n            total_tokens: response.usage?.total_tokens || 0,\n            research_timestamp: new Date().toISOString()\n        },\n        // Pass through original research parameters\n        researchPrompt: response.researchPrompt,\n        researchDepth: response.researchDepth,\n        researchFocus: response.researchFocus,\n        researchId: response.researchId\n    }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        304,
-        16
+        -384,
+        608
       ],
-      "id": "4ed9d32a-a90b-49a8-b6d6-f405c0977eac",
-      "name": "Data Divide"
+      "id": "298c5a09-d176-485c-8ff1-15227127d943",
+      "name": "Research Metadata Processor"
     }
   ],
   "pinData": {},
@@ -734,7 +760,7 @@
         ],
         [
           {
-            "node": "Code2",
+            "node": "Preprocess Data",
             "type": "main",
             "index": 0
           }
@@ -796,7 +822,29 @@
         ]
       ]
     },
-    "Get only the text": {
+    "Data Divide": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preprocess Data": {
+      "main": [
+        [
+          {
+            "node": "Research Image Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Research Output": {
       "main": [
         [
           {
@@ -807,44 +855,44 @@
         ]
       ]
     },
-    "HTTP Request GROQ LLAVA": {
+    "Advanced Research Analysis": {
       "main": [
         [
           {
-            "node": "Get only the text",
+            "node": "Research Metadata Processor",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "convert the image file to base64": {
+    "Convert Image to Base64": {
       "main": [
         [
           {
-            "node": "HTTP Request GROQ LLAVA",
+            "node": "Advanced Research Analysis",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Code2": {
+    "Research Image Processor": {
       "main": [
         [
           {
-            "node": "convert the image file to base64",
+            "node": "Convert Image to Base64",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Data Divide": {
+    "Research Metadata Processor": {
       "main": [
         [
           {
-            "node": "HTTP Request",
+            "node": "Format Research Output",
             "type": "main",
             "index": 0
           }
@@ -856,7 +904,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "a8f7d82a-bb5c-4aaf-9e76-bc368185b2e3",
+  "versionId": "369ef5a9-fc98-4232-9b3f-1e2acf18e632",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "5380752d512acecec1018ea1a6bbbd6a1de13ccb2fa81089d08e342c77ae6c3e"
