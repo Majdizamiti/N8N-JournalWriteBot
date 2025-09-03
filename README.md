@@ -70,9 +70,10 @@ Step 4 : setup the web interface
     1 . Download index.html
     2 . Replace YOUR_N8N_WEBHOOK_URL_HERE with the URL you copied from your Webhook node
     3 . Run the file
-<img width="1365" height="714" alt="Capture d'écran 2025-08-30 104821" src="https://github.com/user-attachments/assets/5b352989-738e-4919-bf73-747210d48d5c" />
-<img width="1365" height="715" alt="Capture d'écran 2025-08-30 104905" src="https://github.com/user-attachments/assets/58419b03-6c4f-4dab-9c2c-3a56d554209d" />
-<img width="1365" height="713" alt="Capture d’écran 2025-08-30 105027" src="https://github.com/user-attachments/assets/0ff7ad08-6a15-41e0-88dc-ce35ba92d728" />
+<img width="1363" height="767" alt="Capture d'écran 2025-09-03 1114261" src="https://github.com/user-attachments/assets/b3326c9c-c640-4ce9-a51a-821a43f20af7" />
+<img width="1365" height="767" alt="Capture d'écran 2025-09-03 111502" src="https://github.com/user-attachments/assets/7367ac19-bed1-4589-815b-4ad8971d08e2" />
+<img width="1363" height="767" alt="Capture d’écran 2025-08-30 1050271" src="https://github.com/user-attachments/assets/c96e5991-0b22-45ce-9438-ecd08fad4729" />
+
 And finally your n8n workflow execute correctly
 nb : Please setup your APIs (groq , llama ...)
 
